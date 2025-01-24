@@ -3,17 +3,22 @@
 #include <LiquidCrystal_I2C.h>
 #include <RTClib.h>
 #include <SPI.h>
+#include <DHT.h>
+#include <Adafruit_Sensor.h>
 
 // Set the LCD address to 0x27 for a 16 chars and 2 line display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 RTC_DS3231 rtc;
+DHT dht(2, DHT11);
 
-int currentHour;
-int currentMinute;
-int currentDay;
-int currentMonth;
-int currentYear;
-int currentDOW;
+int currentHour, 
+currentMinute, 
+currentDay,
+currentMonth,
+currentYear,
+currentDOW,
+currentTemp,
+currentHumi;
 
 byte sDay[] = {
   0x0F,
@@ -94,9 +99,10 @@ byte humidityChar[] = {
 
 void setup()
 {
-	// initialize the LCD
+	pinMode(9,OUTPUT);
 	lcd.init();
   rtc.begin();
+  dht.begin();
   if(rtc.lostPower()){
     rtc.adjust(DateTime((__DATE__), (__TIME__)));
   }
@@ -107,6 +113,8 @@ void setup()
   lcd.createChar(2, tDay);
   lcd.createChar(3, wDay);
   lcd.createChar(4, fDay);
+  lcd.createChar(5, celsiusChar);
+  lcd.createChar(6, humidityChar);
 }
 
 void zeroPadding(int time){
@@ -130,14 +138,12 @@ void loop()
 {
   DateTime timeNow = rtc.now();
   lcd.setCursor(0,0);
-  if(checkChange(timeNow.hour(), currentHour)){
-    if(timeNow.hour()<10){
-      zeroPadding(timeNow.hour());
-    }else{
-      lcd.print(timeNow.hour());
-    }
-    currentHour = timeNow.hour();
+  if(timeNow.hour()<10){
+    zeroPadding(timeNow.hour());
+  }else{
+    lcd.print(timeNow.hour());
   }
+  currentHour = timeNow.hour();
 
   lcd.setCursor(2,0);
   lcd.print(":");
@@ -218,6 +224,26 @@ void loop()
   if(checkChange(timeNow.year(), currentYear)){
     lcd.print(timeNow.year());
   }
-  
-	// Do nothing here...
+
+  lcd.setCursor(10,1);
+
+  if(checkChange(dht.readTemperature(), currentTemp)){
+    lcd.print(int(dht.readTemperature()));
+    lcd.write(5);
+    currentTemp = dht.readTemperature();
+  }
+
+  lcd.setCursor(13,1);
+
+  if(checkChange(dht.readHumidity(), currentHumi)){
+    lcd.print(int(dht.readHumidity()));
+    lcd.write(6);
+    currentHumi = dht.readHumidity();
+  }
+
+  if(timeNow.second()%2==0){
+    digitalWrite(9,HIGH);
+  }else{
+    digitalWrite(9,LOW);  
+  }
 }
