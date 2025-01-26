@@ -99,6 +99,15 @@ byte humidityChar[] = {
 
 void setup()
 {
+  //This prevents certain elements not initializing after a reboot
+  //TODO change this to an array later
+  currentHour = -1;
+  currentMinute = -1;
+  currentDay = -1;
+  currentMonth = -1;
+  currentYear = -1;
+  currentDOW = -1;
+
 	pinMode(9,OUTPUT);
 	lcd.init();
   rtc.begin();
@@ -137,13 +146,17 @@ bool checkChange(int curTime, int prevTime){
 void loop()
 {
   DateTime timeNow = rtc.now();
+  
   lcd.setCursor(0,0);
-  if(timeNow.hour()<10){
-    zeroPadding(timeNow.hour());
-  }else{
-    lcd.print(timeNow.hour());
+
+  if(checkChange(timeNow.hour(), currentHour)){
+    if(timeNow.hour()<10){
+      zeroPadding(timeNow.hour());
+    }else{
+      lcd.print(timeNow.hour());
+    }
+    currentHour = timeNow.hour();
   }
-  currentHour = timeNow.hour();
 
   lcd.setCursor(2,0);
   lcd.print(":");
