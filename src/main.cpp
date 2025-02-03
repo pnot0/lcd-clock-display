@@ -11,6 +11,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 RTC_DS3231 rtc;
 DHT dht(2, DHT11);
 
+//TODO change this to an array later
 int currentHour, 
 currentMinute, 
 currentDay,
@@ -26,9 +27,9 @@ byte sDay[] = {
   0x10,
   0x0E,
   0x01,
-  0x01,
   0x1E,
-  0x15
+  0x00,
+  0x1F
 };
 
 byte mDay[] = {
@@ -38,8 +39,8 @@ byte mDay[] = {
   0x15,
   0x11,
   0x11,
-  0x11,
-  0x15
+  0x00,
+  0x1F
 };
 
 byte tDay[] = {
@@ -49,30 +50,30 @@ byte tDay[] = {
   0x04,
   0x04,
   0x04,
-  0x04,
-  0x15
+  0x00,
+  0x1F
 };
 
 byte wDay[] = {
   0x11,
   0x11,
   0x11,
-  0x11,
   0x15,
   0x15,
   0x0A,
-  0x15
+  0x00,
+  0x1F
 };
 
 byte fDay[] = {
   0x1F,
   0x10,
   0x10,
-  0x1E,
+  0x1C,
   0x10,
   0x10,
-  0x10,
-  0x15
+  0x00,
+  0x1F
 };
 
 byte celsiusChar[] = {
@@ -100,7 +101,6 @@ byte humidityChar[] = {
 void setup()
 {
   //This prevents certain elements not initializing after a reboot
-  //TODO change this to an array later
   currentHour = -1;
   currentMinute = -1;
   currentDay = -1;
