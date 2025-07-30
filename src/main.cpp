@@ -108,10 +108,12 @@ void setup()
   currentYear = -1;
   currentDOW = -1;
 
+  
 	pinMode(9,OUTPUT);
 	lcd.init();
   rtc.begin();
   dht.begin();
+  
   if(rtc.lostPower()){
     rtc.adjust(DateTime((__DATE__), (__TIME__)));
   }
@@ -161,14 +163,13 @@ void loop()
   lcd.setCursor(2,0);
   lcd.print(":");
 
-  //For some reason time is off by 5 minutes
-  if(checkChange(timeNow.minute() + 5, currentMinute)){
-    if((timeNow.minute() + 5)<10){
-      zeroPadding(timeNow.minute() + 5);
+  if(checkChange(timeNow.minute(), currentMinute)){
+    if(timeNow.minute()<10){
+      zeroPadding(timeNow.minute());
     }else{
-      lcd.print(timeNow.minute() + 5);
+      lcd.print(timeNow.minute());
     }
-    currentMinute = timeNow.minute() + 5;
+    currentMinute = timeNow.minute();
   }
 
   lcd.setCursor(5,0);
