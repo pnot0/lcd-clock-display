@@ -161,13 +161,14 @@ void loop()
   lcd.setCursor(2,0);
   lcd.print(":");
 
-  if(checkChange(timeNow.minute(), currentMinute)){
-    if(timeNow.minute()<10){
-      zeroPadding(timeNow.minute());
+  //For some reason time is off by 5 minutes
+  if(checkChange(timeNow.minute() + 5, currentMinute)){
+    if((timeNow.minute() + 5)<10){
+      zeroPadding(timeNow.minute() + 5);
     }else{
-      lcd.print(timeNow.minute());
+      lcd.print(timeNow.minute() + 5);
     }
-    currentMinute = timeNow.minute();
+    currentMinute = timeNow.minute() + 5;
   }
 
   lcd.setCursor(5,0);
@@ -235,10 +236,10 @@ void loop()
   lcd.print("/");
 
   if(checkChange(timeNow.year(), currentYear)){
-    lcd.print(timeNow.year());
+    lcd.print(timeNow.year() - 2000);
   }
 
-  lcd.setCursor(10,1);
+  lcd.setCursor(9,1);
 
   if(checkChange(dht.readTemperature(), currentTemp)){
     lcd.print(int(dht.readTemperature()));
